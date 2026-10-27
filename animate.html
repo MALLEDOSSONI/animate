@@ -1,82 +1,717 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <style>
-            *{
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            body{
-                --bg-color:radial-gradient(#003,#000);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--bg-color);
-            }
-            .box{
-                position: relative;
-                width: 500px;
-                height: 500px;
-                display: flex;
-                justify-content: center;
-            }
-            .box span{
-                position: absolute;
-                width: 10px;
-                height: 250px;
-                background: transparent;
-                border-bottom: 4px solid transparent;
-                transform-origin: bottom;
-                transform: rotate(calc(22.5 deg * var(--i)));
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilotage des fiches</title>
+    <style>
+        :root {
+            --bg: #0a0c12;
+            --card: #111727;
+            --border: #1c2741;
+            --text: #dce7ff;
+            --muted: #8ea6c5;
+            --accent: #6dd5ed;
+            --accent-2: #f6d365;
+            --danger: #ff6b6b;
+            --success: #16c79a;
+            --shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+        }
 
-            }
-            .box span::before {
-                content: "";
-                position: absolute;
-                width: 100%;
-                height: 50px;
-                background: #0af;
-                box-shadow: 0 0 20px #0af;
-                border-radius: 10px;
-                animation: animate 1.5s linear infinite;
-                animation-delay: calc(0.1s var(--i));
-            }
-            @keyframes animate {
-                0% {
-                    transform: translateY(160px) rotate(-45deg);
-                    filter: hue-rotate(0deg);
-                }
-                50% {
-                    transform: translateY(90px);
-                }
-                100%{
-                    transform: translateY(160px) rotate(45deg);
-                    filter: hue-rotate(360deg);
-                }
-            }
-        </style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    </head>
-    <body>
-        <div class="box">
-            <span style="--i:0;"></span>
-            <span style="--i:1;"></span>
-            <span style="--i:2;"></span>
-            <span style="--i:3;"></span>
-            <span style="--i:4;"></span>
-            <span style="--i:5;"></span>
-            <span style="--i:6;"></span>
-            <span style="--i:7;"></span>
-            <span style="--i:8;"></span>
-            <span style="--i:9;"></span>
-            <span style="--i:10;"></span>
-            <span style="--i:11;"></span>
-            <span style="--i:12;"></span>
-            <span style="--i:13;"></span>
-            <span style="--i:14;"></span>
-            <span style="--i:15;"></span>
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 20%, rgba(109, 213, 237, 0.1), transparent 35%),
+                radial-gradient(circle at 80% 0%, rgba(246, 211, 101, 0.1), transparent 30%),
+                var(--bg);
+            color: var(--text);
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            padding: 32px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(120deg, rgba(109, 213, 237, 0.15), rgba(246, 211, 101, 0.12));
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-weight: 600;
+            color: var(--text);
+            box-shadow: var(--shadow);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            letter-spacing: 0.02em;
+            color: var(--muted);
+        }
+
+        h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(109, 213, 237, 0.12);
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: none;
+            color: #0b0f1b;
+            background: linear-gradient(120deg, var(--accent), #36d1dc);
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 15px 30px rgba(54, 209, 220, 0.25);
+        }
+
+        .error-box {
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            background: rgba(255, 107, 107, 0.08);
+            color: var(--danger);
+            padding: 10px 12px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .status {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status[data-state="success"] { color: var(--success); }
+        .status[data-state="error"] { color: var(--danger); }
+        .status[data-state="validation"] { color: var(--accent-2); }
+
+        .timeline {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .timeline li {
+            position: relative;
+            padding: 12px 12px 12px 20px;
+            border-left: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        .timeline li::before {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            left: -6px;
+            top: 14px;
+            box-shadow: 0 0 0 6px rgba(109, 213, 237, 0.16);
+        }
+
+        .timeline small { color: var(--muted); }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--border);
+            padding: 8px 6px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th { color: var(--muted); font-weight: 600; }
+        td { color: var(--text); }
+
+        .muted { color: var(--muted); }
+        .stack { display: grid; gap: 8px; }
+
+        @media (max-width: 980px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <div class="pill">Pilotage des fiches (ouverture → satisfaction)</div>
+            <h1>Cycle complet d'une demande</h1>
+            <p class="muted">Prototypage des écrans, validations front/back, pièces jointes et timeline intégrée.</p>
         </div>
-    </body>
+        <div class="badge">Fiche courante : FICHE-2024-01</div>
+    </header>
+
+    <div class="layout">
+        <div class="grid">
+            <section class="card">
+                <div class="status" id="status-open">Ouverture · En attente de validation</div>
+                <h3>1. Ouverture</h3>
+                <form data-stage="open">
+                    <label> Titre de la demande
+                        <input type="text" name="titre" placeholder="Ex: Incident réseau site Paris" required>
+                    </label>
+                    <label> Demandeur (email)
+                        <input type="email" name="demandeur" placeholder="prenom.nom@acme.test" required>
+                    </label>
+                    <label> Type de demande
+                        <select name="type" required>
+                            <option value="">Sélectionner</option>
+                            <option>Incident</option>
+                            <option>Service</option>
+                            <option>Évolution</option>
+                        </select>
+                    </label>
+                    <label> Sévérité (si incident)
+                        <select name="severity">
+                            <option value="">Non renseigné</option>
+                            <option>Critique</option>
+                            <option>Majeur</option>
+                            <option>Mineur</option>
+                        </select>
+                    </label>
+                    <label> Description détaillée
+                        <textarea name="description" placeholder="Décrire le périmètre, les impacts et les attentes"></textarea>
+                    </label>
+                    <div class="stack">
+                        <div class="chips">
+                            <span class="chip">Pièces jointes PDF/JPG/PNG (max 2 Mo)</span>
+                            <span class="chip">Sévérité obligatoire pour les incidents</span>
+                        </div>
+                        <input type="file" id="attachments" multiple accept="application/pdf,image/png,image/jpeg">
+                    </div>
+                    <div class="error-box" data-errors="open"></div>
+                    <button type="submit">Enregistrer l'ouverture</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <div class="status" id="status-process">Traitement · En attente de validation</div>
+                <h3>2. Traitement</h3>
+                <form data-stage="process">
+                    <label> Responsable
+                        <input type="text" name="responsable" placeholder="Assigné à" required>
+                    </label>
+                    <label> Statut opérationnel
+                        <select name="statut" required>
+                            <option value="">Choisir</option>
+                            <option>Diagnostic</option>
+                            <option>En cours</option>
+                            <option>Bloqué</option>
+                            <option>Résolu</option>
+                        </select>
+                    </label>
+                    <label> Date cible
+                        <input type="date" name="dateCible" required>
+                    </label>
+                    <label> Commentaires
+                        <textarea name="commentaires" placeholder="Actions réalisées, risques, besoins"></textarea>
+                    </label>
+                    <div class="chips">
+                        <span class="chip">La date cible est obligatoire</span>
+                        <span class="chip">Statut "Bloqué" impose un commentaire</span>
+                    </div>
+                    <div class="error-box" data-errors="process"></div>
+                    <button type="submit">Valider le traitement</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <div class="status" id="status-validate">Validation · En attente de validation</div>
+                <h3>3. Validation</h3>
+                <form data-stage="validate">
+                    <label> Conformité livrable
+                        <select name="conformite" required>
+                            <option value="">Sélectionner</option>
+                            <option>Conforme</option>
+                            <option>Non conforme</option>
+                        </select>
+                    </label>
+                    <label> Preuve fournie
+                        <select name="preuve" required>
+                            <option value="">Choisir</option>
+                            <option>Journal d'exécution</option>
+                            <option>Capture d'écran</option>
+                            <option>Procès-verbal</option>
+                        </select>
+                    </label>
+                    <label> Commentaire de validation
+                        <textarea name="commentaire"></textarea>
+                    </label>
+                    <div class="chips">
+                        <span class="chip">Commentaire obligatoire si non conforme</span>
+                        <span class="chip">Validation vérifie la cohérence des pièces</span>
+                    </div>
+                    <div class="error-box" data-errors="validate"></div>
+                    <button type="submit">Valider la conformité</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <div class="status" id="status-close">Clôture · En attente de validation</div>
+                <h3>4. Clôture</h3>
+                <form data-stage="close">
+                    <label> Mode de clôture
+                        <select name="mode" required>
+                            <option value="">Sélectionner</option>
+                            <option>Livré en production</option>
+                            <option>Annulé</option>
+                            <option>Replanifié</option>
+                        </select>
+                    </label>
+                    <label> Documentation à jour ?
+                        <select name="documentation" required>
+                            <option value="">Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                        </select>
+                    </label>
+                    <label> Lien vers le guide utilisateur (si documentation)
+                        <input type="url" name="guide" placeholder="https://docs.acme.test/fiche" />
+                    </label>
+                    <div class="chips">
+                        <span class="chip">Guide requis si documentation = Oui</span>
+                        <span class="chip">Clôture refuse les statuts incohérents</span>
+                    </div>
+                    <div class="error-box" data-errors="close"></div>
+                    <button type="submit">Confirmer la clôture</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <div class="status" id="status-satisfaction">Satisfaction · En attente de validation</div>
+                <h3>5. Satisfaction</h3>
+                <form data-stage="satisfaction">
+                    <label> Note de satisfaction
+                        <input type="number" name="note" min="1" max="5" placeholder="1 à 5" required>
+                    </label>
+                    <label> Retour client
+                        <textarea name="feedback" placeholder="Points positifs et axes d'amélioration"></textarea>
+                    </label>
+                    <label> Plan d'amélioration (si note ≤ 2)
+                        <textarea name="amelioration" placeholder="Actions correctives"></textarea>
+                    </label>
+                    <div class="chips">
+                        <span class="chip">Note obligatoire</span>
+                        <span class="chip">Plan requis si note basse</span>
+                    </div>
+                    <div class="error-box" data-errors="satisfaction"></div>
+                    <button type="submit">Enregistrer la satisfaction</button>
+                </form>
+            </section>
+        </div>
+
+        <aside class="card">
+            <div class="status" id="global-status">Prêt pour les validations front/back</div>
+            <h3>Pièces jointes</h3>
+            <p class="muted">Upload, métadonnées et contraintes de taille/type vérifiées côté client et serveur simulé.</p>
+            <div class="stack">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Type</th>
+                            <th>Taille</th>
+                            <th>Horodatage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attachment-rows">
+                        <tr><td colspan="4" class="muted">Aucun fichier ajouté</td></tr>
+                    </tbody>
+                </table>
+                <div class="badge" id="attachment-count">0 fichier</div>
+            </div>
+
+            <h3 style="margin-top:18px;">Timeline de la fiche</h3>
+            <ul class="timeline" id="timeline"></ul>
+        </aside>
+    </div>
+
+    <script>
+        const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
+        const maxFileSize = 2 * 1024 * 1024; // 2 Mo
+        const state = {
+            id: "FICHE-2024-01",
+            attachments: [],
+            timeline: []
+        };
+
+        const statusLabels = {
+            open: document.getElementById("status-open"),
+            process: document.getElementById("status-process"),
+            validate: document.getElementById("status-validate"),
+            close: document.getElementById("status-close"),
+            satisfaction: document.getElementById("status-satisfaction"),
+            global: document.getElementById("global-status")
+        };
+
+        document.querySelectorAll("form[data-stage]").forEach((form) => {
+            form.addEventListener("submit", (event) => handleSubmit(event, form.dataset.stage));
+        });
+
+        document.getElementById("attachments").addEventListener("change", handleAttachmentUpload);
+
+        function handleAttachmentUpload(event) {
+            const files = Array.from(event.target.files || []);
+            const errors = [];
+            const accepted = [];
+
+            files.forEach((file) => {
+                if (!allowedTypes.includes(file.type)) {
+                    errors.push(`${file.name} : type non autorisé (${file.type || "inconnu"})`);
+                } else if (file.size > maxFileSize) {
+                    errors.push(`${file.name} : taille ${(file.size / 1024 / 1024).toFixed(2)} Mo supérieure à 2 Mo`);
+                } else {
+                    accepted.push({
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        addedAt: new Date(file.lastModified || Date.now())
+                    });
+                }
+            });
+
+            if (errors.length) {
+                showErrors("open", errors);
+            } else if (accepted.length) {
+                clearErrors("open");
+                state.attachments.push(...accepted);
+                renderAttachments();
+                addTimeline("Pièces jointes", `${accepted.length} fichier(s) chargé(s)`);
+                statusLabels.global.textContent = "Upload validé (front + contraintes backend simulées)";
+                statusLabels.global.dataset.state = "success";
+            }
+
+            event.target.value = "";
+        }
+
+        function handleSubmit(event, stage) {
+            event.preventDefault();
+            const data = Object.fromEntries(new FormData(event.target));
+            const frontErrors = validateFrontend(stage, data);
+
+            if (frontErrors.length) {
+                showErrors(stage, frontErrors);
+                setStatus(stage, "error", "Blocage validation frontend");
+                return;
+            }
+
+            setStatus(stage, "validation", "Validation backend en cours...");
+            simulateBackendValidation(stage, data)
+                .then(() => {
+                    clearErrors(stage);
+                    setStatus(stage, "success", "Front et backend validés");
+                    addTimeline(formatStage(stage), synthesizeSummary(stage, data));
+                })
+                .catch((errors) => {
+                    showErrors(stage, errors);
+                    setStatus(stage, "error", "Blocage validation backend");
+                });
+        }
+
+        function validateFrontend(stage, data) {
+            const errors = [];
+            if (stage === "open") {
+                ["titre", "demandeur", "type", "description"].forEach((field) => {
+                    if (!data[field] || !data[field].trim()) {
+                        errors.push(`${field} est obligatoire`);
+                    }
+                });
+                if (data.type === "Incident" && !data.severity) {
+                    errors.push("La sévérité est obligatoire pour un incident");
+                }
+                if (!state.attachments.length) {
+                    errors.push("Au moins une pièce jointe est requise");
+                }
+            }
+
+            if (stage === "process") {
+                ["responsable", "statut", "dateCible"].forEach((field) => {
+                    if (!data[field]) errors.push(`${field} est obligatoire`);
+                });
+                if (data.statut === "Bloqué" && (!data.commentaires || !data.commentaires.trim())) {
+                    errors.push("Un commentaire est requis quand le traitement est bloqué");
+                }
+            }
+
+            if (stage === "validate") {
+                if (!data.conformite) errors.push("Conformité est obligatoire");
+                if (!data.preuve) errors.push("Preuve est obligatoire");
+                if (data.conformite === "Non conforme" && !data.commentaire.trim()) {
+                    errors.push("Commentaire obligatoire si non conforme");
+                }
+            }
+
+            if (stage === "close") {
+                if (!data.mode) errors.push("Mode de clôture requis");
+                if (!data.documentation) errors.push("Documentation renseignée ?");
+                if (data.documentation === "Oui" && !data.guide.trim()) {
+                    errors.push("Lien de guide requis si documentation à jour");
+                }
+            }
+
+            if (stage === "satisfaction") {
+                if (!data.note) errors.push("La note de satisfaction est obligatoire");
+                const noteValue = Number(data.note || 0);
+                if (noteValue < 1 || noteValue > 5) errors.push("La note doit être comprise entre 1 et 5");
+                if (noteValue <= 2 && !data.amelioration.trim()) {
+                    errors.push("Plan d'amélioration requis si note faible");
+                }
+            }
+
+            return errors;
+        }
+
+        function simulateBackendValidation(stage, data) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const errors = [];
+
+                    if (stage === "open") {
+                        if (!data.demandeur.endsWith("@acme.test")) {
+                            errors.push("Le domaine de l'email doit appartenir à acme.test");
+                        }
+                        if (state.attachments.some((file) => file.size > maxFileSize)) {
+                            errors.push("Une pièce jointe dépasse la taille autorisée côté serveur");
+                        }
+                    }
+
+                    if (stage === "process") {
+                        const targetDate = new Date(data.dateCible);
+                        const now = new Date();
+                        if (targetDate < now) {
+                            errors.push("La date cible ne peut pas être dans le passé");
+                        }
+                    }
+
+                    if (stage === "validate") {
+                        if (!state.attachments.length) {
+                            errors.push("Aucune pièce jointe pour justifier la validation");
+                        }
+                    }
+
+                    if (stage === "close") {
+                        if (data.mode === "Annulé" && data.documentation === "Oui") {
+                            errors.push("Incohérence : annulé mais documentation marquée à jour");
+                        }
+                    }
+
+                    if (stage === "satisfaction") {
+                        if (Number(data.note) <= 2 && !data.feedback.trim()) {
+                            errors.push("Le retour client est requis si la note est basse");
+                        }
+                    }
+
+                    if (errors.length) reject(errors);
+                    else resolve();
+                }, 280);
+            });
+        }
+
+        function renderAttachments() {
+            const tbody = document.getElementById("attachment-rows");
+            tbody.innerHTML = "";
+            if (!state.attachments.length) {
+                tbody.innerHTML = '<tr><td colspan="4" class="muted">Aucun fichier ajouté</td></tr>';
+            } else {
+                state.attachments.forEach((file) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${file.name}</td>
+                        <td>${file.type || "inconnu"}</td>
+                        <td>${(file.size / 1024).toFixed(1)} Ko</td>
+                        <td>${formatDate(file.addedAt)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            document.getElementById("attachment-count").textContent = `${state.attachments.length} fichier(s)`;
+        }
+
+        function addTimeline(step, description) {
+            state.timeline.unshift({ step, description, at: new Date() });
+            renderTimeline();
+        }
+
+        function renderTimeline() {
+            const list = document.getElementById("timeline");
+            list.innerHTML = "";
+            if (!state.timeline.length) {
+                const li = document.createElement("li");
+                li.textContent = "Aucune action pour le moment";
+                list.appendChild(li);
+                return;
+            }
+            state.timeline.forEach((entry) => {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>${entry.step}</strong><br><span class="muted">${entry.description}</span><br><small>${formatDate(entry.at)}</small>`;
+                list.appendChild(li);
+            });
+        }
+
+        function formatDate(date) {
+            const d = new Date(date);
+            return d.toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
+        }
+
+        function showErrors(stage, messages) {
+            const box = document.querySelector(`[data-errors="${stage}"]`);
+            if (!box) return;
+            box.style.display = "block";
+            box.innerHTML = messages.map((msg) => `• ${msg}`).join("<br>");
+        }
+
+        function clearErrors(stage) {
+            const box = document.querySelector(`[data-errors="${stage}"]`);
+            if (!box) return;
+            box.style.display = "none";
+            box.innerHTML = "";
+        }
+
+        function setStatus(stage, stateKey, message) {
+            const target = stage === "global" ? statusLabels.global : statusLabels[stage];
+            target.dataset.state = stateKey;
+            target.textContent = message;
+        }
+
+        function formatStage(stage) {
+            return {
+                open: "Ouverture validée",
+                process: "Traitement",
+                validate: "Validation",
+                close: "Clôture",
+                satisfaction: "Satisfaction"
+            }[stage] || stage;
+        }
+
+        function synthesizeSummary(stage, data) {
+            switch (stage) {
+                case "open":
+                    return `${data.type} par ${data.demandeur}`;
+                case "process":
+                    return `${data.statut} par ${data.responsable}`;
+                case "validate":
+                    return `${data.conformite} avec ${data.preuve}`;
+                case "close":
+                    return `${data.mode} · Doc: ${data.documentation}`;
+                case "satisfaction":
+                    return `Note ${data.note} / 5`;
+                default:
+                    return "Étape mise à jour";
+            }
+        }
+
+        addTimeline("Fiche créée", "Initialisation de la fiche FICHE-2024-01");
+        renderAttachments();
+    </script>
+</body>
 </html>
